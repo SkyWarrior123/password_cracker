@@ -25,3 +25,23 @@ pub fn generate_rainbow_table<P: AsRef<Path>, Q: AsRef<Path>>(
 
     Ok(count)
 }
+
+// Look up a hash in a pre-computed rainbow table file
+pub fn lookup_rainbow_table<P: AsRef<Path>>(
+    target_hash: &str,
+    table_path: P,
+) -> Result<Option<String>, std::io::Error> {
+    let file = File::open(table_path)?;
+    let reader = BufReader::new(file);
+
+    for line in reader.lines() {
+        let line = line?;
+        if let Some((hash, password)) = line.split_once(':') {
+            if hash == target_hash {
+                return Ok(Some(password.to_string()));
+            }
+        }
+    }
+
+    Ok(None)
+}
