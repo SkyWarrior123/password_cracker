@@ -45,3 +45,34 @@ pub fn lookup_rainbow_table<P: AsRef<Path>>(
 
     Ok(None)
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+
+    #[test]
+    fn test_rainbow_table_generation_and_lookup() {
+        let wordlist_path = "test_wordlist_temp.txt";
+        let table_path = "test_rainbow_temp.txt";
+
+        // Creating a mock wordlist
+        {
+            let mut f = File::create(&wordlist_path).unwrap();
+            writeln!(f, "admin").unwrap();
+            writeln!(f, "secret").unwrap();
+        }
+
+        // Generate table
+        let count = generate_rainbow_table(&wordlist_path, &table_path).unwrap();
+        assert_eq!(count, 2);
+
+        let target = hash_password("secret");
+        let found = lookup_rainbow_table(&target, &table_path).unwrap();
+        assert_eq!(found, Some("secret".to_string()));
+
+        let _ = std::fs::remove_file(wordlist_path);
+        let _ = std::fs::remove_file(table_path);
+    }
+}
