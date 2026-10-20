@@ -1,0 +1,9 @@
+[package]
+name = "password_cracker"
+version = "0.1.0"
+edition = "2021"
+authors = ["Sahbaaz Ansari"]
+
+[dependencies]
+md5 = "0.7.0"
+rayon = "1.10.0"
